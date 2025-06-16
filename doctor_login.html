@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Login - KinetiCare</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo">KinetiCare</div>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="patient_login.html">Patient Login</a></li>
+        <li><a href="doctor_login.html">Doctor Login</a></li>
+        <li><a href="Signup.html">Sign Up</a></li>
+        <li><a href="terms_condition.html">Terms & Conditions</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section class="login">
+      <h2>Doctor Login</h2>
+      <form id="login-form">
+        <div>
+          <label for="email">Email</label>
+          <input type="email" id="email" required>
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input type="password" id="password" required>
+        </div>
+        <button type="submit">Login</button>
+        <p id="error-message" class="error"></p>
+      </form>
+      <p>Don't have an account? <a href="Signup.html">Sign Up</a></p>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2025 KinetiCare. All rights reserved.</p>
+  </footer>
+  <script src="assets/js/app.js"></script>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      try {
+        const response = await fetch('http://localhost:5000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message);
+        localStorage.setItem('token', data.token);
+        if (data.user.role !== 'doctor') throw new Error('Not a doctor account');
+        window.location.href = 'doctor_page1.html';
+      } catch (err) {
+        document.getElementById('error-message').textContent = err.message;
+      }
+    });
+  </script>
+</body>
+</html>
